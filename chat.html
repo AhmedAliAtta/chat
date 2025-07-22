@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>صفحة التواصل (الدردشة)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playpen+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Playpen Sans Arabic', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #e6e6fa; /* لون خلفية مريح */
+            margin: 0;
+            padding: 20px;
+            direction: rtl; /* اتجاه الكتابة من اليمين لليسار */
+            text-align: right;
+        }
+
+        .chat-container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background-color: #6200EE;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 1.5em;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        .messages-box {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 400px; /* ارتفاع أقصى لصندوق الرسائل */
+            background-color: #f7f7f7;
+            display: flex;
+            flex-direction: column-reverse; /* لعرض أحدث الرسائل في الأسفل */
+        }
+
+        .message {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+            max-width: 80%;
+            word-wrap: break-word; /* عشان النص يتلف تلقائيًا */
+        }
+
+        .message.sent {
+            align-self: flex-end; /* رسائل مرسلة تظهر على اليمين */
+            background-color: #DCF8C6; /* لون أخضر فاتح */
+        }
+
+        .message.received {
+            align-self: flex-start; /* رسائل مستلمة تظهر على الشمال */
+            background-color: #e0f2f7; /* لون أزرق فاتح */
+        }
+
+        .message-sender {
+            font-weight: bold;
+            color: #6200EE;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+
+        .message-content {
+            font-size: 1em;
+            color: #333;
+        }
+
+        .message-time {
+            font-size: 0.75em;
+            color: #888;
+            margin-top: 5px;
+            text-align: left; /* الوقت يظهر على الشمال للرسائل اليمين، وعلى اليمين للرسائل الشمال */
+        }
+        .message.sent .message-time {
+            text-align: left;
+        }
+        .message.received .message-time {
+            text-align: right;
+        }
+
+
+        .input-area {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid #eee;
+            background-color: #fff;
+        }
+
+        .input-area input[type="text"] {
+            flex-grow: 1;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 1em;
+            margin-left: 10px; /* مسافة بين مربع الكتابة والزرار */
+            direction: rtl;
+            text-align: right;
+        }
+
+        .input-area button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .input-area button:hover {
+            background-color: #0056b3;
+        }
+
+        .auth-section {
+            margin-bottom: 20px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .auth-section input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .auth-section button {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .auth-section button:hover {
+            background-color: #218838;
+        }
+        .auth-status {
+            margin-top: 15px;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .logout-button {
+            background-color: #dc3545 !important;
+        }
+        .logout-button:hover {
+            background-color: #c82333 !important;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="auth-section" id="authSection">
+        <h3>تسجيل الدخول / التسجيل</h3>
+        <input type="email" id="emailInput" placeholder="البريد الإلكتروني">
+        <input type="password" id="passwordInput" placeholder="كلمة المرور">
+        <button onclick="signUp()">تسجيل حساب جديد</button>
+        <button onclick="signIn()">تسجيل دخول</button>
+        <p id="authStatus" class="auth-status">يرجى تسجيل الدخول</p>
+        <button class="logout-button" onclick="signOut()" style="display: none;">تسجيل الخروج</button>
+    </div>
+
+    <div class="chat-container" style="display: none;" id="chatContainer">
+        <div class="chat-header">
+            صفحة الدردشة
+        </div>
+        <div class="messages-box" id="messagesBox">
+            </div>
+        <div class="input-area">
+            <input type="text" id="messageInput" placeholder="اكتب رسالتك هنا...">
+            <button onclick="sendMessage()">إرسال <i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut as firebaseSignOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
+
+        // ** إعدادات Firebase الخاصة بمشروع rorito-chat **
+        const firebaseConfig = {
+            apiKey: "AIzaSyD14WaJw7HbkQ-vwPsb8BZ04IVGu_Oo53o",
+            authDomain: "rorito-chat.firebaseapp.com",
+            projectId: "rorito-chat",
+            storageBucket: "rorito-chat.firebasestorage.app",
+            messagingSenderId: "239151687849",
+            appId: "1:239151687849:web:69d606e30765256248e1b8",
+            measurementId: "G-N4NHWJEK6C"
+        };
+
+        // تهيئة Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app); // للحصول على خدمة المصادقة
+        const db = getFirestore(app); // للحصول على خدمة قاعدة البيانات
+
+        const messagesCollection = collection(db, "messages"); // اسم المجموعة اللي هتتخزن فيها الرسائل
+
+        // عناصر الـ HTML
+        const authSection = document.getElementById('authSection');
+        const chatContainer = document.getElementById('chatContainer');
+        const authStatus = document.getElementById('authStatus');
+        const logoutButton = document.querySelector('.logout-button');
+        const emailInput = document.getElementById('emailInput');
+        const passwordInput = document.getElementById('passwordInput');
+        const messagesBox = document.getElementById('messagesBox');
+        const messageInput = document.getElementById('messageInput');
+
+        let currentUser = null; // لتخزين معلومات المستخدم الحالي
+
+        // 1. وظائف المصادقة (Authentication Functions)
+
+        // تسجيل حساب جديد
+        window.signUp = async () => {
+            const email = emailInput.value;
+            const password = passwordInput.value;
+            try {
+                await createUserWithEmailAndPassword(auth, email, password);
+                alert("تم تسجيل الحساب بنجاح! يمكنك الآن تسجيل الدخول.");
+            } catch (error) {
+                alert("خطأ في تسجيل الحساب: " + error.message);
+                console.error("Sign Up Error:", error);
+            }
+        };
+
+        // تسجيل الدخول
+        window.signIn = async () => {
+            const email = emailInput.value;
+            const password = passwordInput.value;
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                alert("تم تسجيل الدخول بنجاح!");
+            } catch (error) {
+                alert("خطأ في تسجيل الدخول: " + error.message);
+                console.error("Sign In Error:", error);
+            }
+        };
+
+        // تسجيل الخروج
+        window.signOut = async () => {
+            try {
+                await firebaseSignOut(auth);
+                alert("تم تسجيل الخروج.");
+            } catch (error) {
+                alert("خطأ في تسجيل الخروج: " + error.message);
+                console.error("Sign Out Error:", error);
+            }
+        };
+
+        // مراقبة حالة المصادقة (عند تسجيل الدخول أو الخروج)
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // المستخدم سجل دخول
+                currentUser = user;
+                authStatus.textContent = `مرحباً بك: ${user.email}`;
+                authSection.style.display = 'none'; // إخفاء قسم المصادقة
+                chatContainer.style.display = 'flex'; // إظهار صندوق الدردشة
+                logoutButton.style.display = 'block'; // إظهار زر تسجيل الخروج
+                listenForMessages(); // ابدأ في الاستماع للرسائل
+            } else {
+                // المستخدم سجل خروج
+                currentUser = null;
+                authStatus.textContent = 'يرجى تسجيل الدخول';
+                authSection.style.display = 'block'; // إظهار قسم المصادقة
+                chatContainer.style.display = 'none'; // إخفاء صندوق الدردشة
+                logoutButton.style.display = 'none'; // إخفاء زر تسجيل الخروج
+                messagesBox.innerHTML = ''; // مسح الرسائل عند تسجيل الخروج
+            }
+        });
+
+        // 2. وظائف الدردشة (Chat Functions)
+
+        // إرسال رسالة
+        window.sendMessage = async () => {
+            if (!currentUser) {
+                alert("يرجى تسجيل الدخول لإرسال الرسائل.");
+                return;
+            }
+            const messageText = messageInput.value.trim();
+            if (messageText === '') return;
+
+            try {
+                await addDoc(messagesCollection, {
+                    text: messageText,
+                    senderId: currentUser.uid,
+                    senderEmail: currentUser.email,
+                    timestamp: serverTimestamp() // لتسجيل وقت الإرسال بدقة
+                });
+                messageInput.value = ''; // مسح مربع الإدخال
+            } catch (error) {
+                alert("خطأ في إرسال الرسالة: " + error.message);
+                console.error("Send Message Error:", error);
+            }
+        };
+
+        // الاستماع للرسائل الجديدة (Realtime Listener)
+        function listenForMessages() {
+            // استعلام للحصول على الرسائل مرتبة حسب الوقت
+            const q = query(messagesCollection, orderBy("timestamp", "desc")); // "desc" يعني الأحدث أولاً
+
+            // onSnapshot هي الدالة اللي بتخلي الصفحة تستقبل الرسائل لحظياً
+            onSnapshot(q, (snapshot) => {
+                // هنا بنمسح الرسائل القديمة ونعرض الرسائل الجديدة
+                // messagesBox.innerHTML = ''; // لو عايز تمسح كل الرسائل وتعرضها من جديد في كل تحديث
+                // الطريقة الأفضل هي معالجة التغييرات فقط
+                snapshot.docChanges().forEach((change) => {
+                    if (change.type === "added") {
+                        const message = change.doc.data();
+                        displayMessage(message);
+                    }
+                    // يمكنك إضافة حالات "modified" و "removed" لو احتجت لتحديث أو حذف رسائل
+                });
+            });
+        }
+
+        // عرض رسالة في صندوق الدردشة
+        function displayMessage(message) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message');
+
+            const isSentByCurrentUser = currentUser && message.senderId === currentUser.uid;
+            if (isSentByCurrentUser) {
+                messageElement.classList.add('sent');
+            } else {
+                messageElement.classList.add('received');
+            }
+
+            const senderName = message.senderEmail ? message.senderEmail.split('@')[0] : 'مجهول'; // عرض جزء الايميل قبل @
+            const messageTime = message.timestamp ? new Date(message.timestamp.seconds * 1000).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }) : '';
+
+            messageElement.innerHTML = `
+                <div class="message-sender">${isSentByCurrentUser ? 'أنت' : senderName}</div>
+                <div class="message-content">${message.text}</div>
+                <div class="message-time">${messageTime}</div>
+            `;
+            messagesBox.prepend(messageElement); // إضافة الرسالة في الأعلى عشان نستخدم flex-direction: column-reverse
+        }
+
+        // عشان الـ Enter تبعت الرسالة
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+    </script>
+</body>
+</html>
