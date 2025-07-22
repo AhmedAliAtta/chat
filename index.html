@@ -65,9 +65,16 @@
             font-weight: bold;
             color: #007bff;
         }
+        /* زرار تسجيل الخروج دلوقتي هيكون جوه الـ chat-header */
         .logout-button {
             background-color: #dc3545 !important; /* لون أحمر لزر الخروج */
-            margin-top: 10px;
+            font-size: 0.8em;
+            padding: 5px 10px;
+            margin: 0;
+            position: absolute; /* عشان يتحكم في مكانه جوه الهيدر */
+            left: 10px; /* على الشمال */
+            top: 50%;
+            transform: translateY(-50%);
         }
         .logout-button:hover {
             background-color: #c82333 !important;
@@ -93,6 +100,7 @@
             font-size: 1.5em;
             border-top-left-radius: 10px;
             border-top-right-radius: 10px;
+            position: relative; /* عشان زر الخروج اللي جواه ياخد absolute */
         }
 
         .messages-box {
@@ -197,12 +205,12 @@
         <button onclick="signUp()">تسجيل حساب جديد</button>
         <button onclick="signIn()">تسجيل دخول</button>
         <p id="authStatus" class="auth-status">يرجى تسجيل الدخول</p>
-        <button class="logout-button" onclick="signOut()">تسجيل الخروج</button>
-    </div>
+        </div>
 
     <div class="chat-container" id="chatContainer">
         <div class="chat-header">
             صفحة الدردشة
+            <button class="logout-button" onclick="signOut()">تسجيل الخروج</button>
         </div>
         <div class="messages-box" id="messagesBox">
             </div>
@@ -240,7 +248,7 @@
         const authSection = document.getElementById('authSection');
         const chatContainer = document.getElementById('chatContainer');
         const authStatus = document.getElementById('authStatus');
-        const logoutButton = document.querySelector('.logout-button');
+        const logoutButton = document.querySelector('.logout-button'); // مازال بنفس الـ querySelector
         const emailInput = document.getElementById('emailInput');
         const passwordInput = document.getElementById('passwordInput');
         const messagesBox = document.getElementById('messagesBox');
@@ -301,8 +309,8 @@
                 currentUser = user;
                 authStatus.textContent = `مرحباً بك: ${user.email}`;
                 authSection.style.display = 'none'; // Hide auth section
-                chatContainer.style.display = 'flex'; // Show chat container
-                logoutButton.style.display = 'block'; // Show logout button
+                chatContainer.style.display = 'flex'; // Show chat container (as flex for layout)
+                // logoutButton.style.display = 'block'; // هذا السطر لم يعد ضرورياً بوجود الزر داخل الـ chat-container الذي يظهر كله
                 listenForMessages(); // Start listening for messages
             } else {
                 // User is logged out
@@ -310,7 +318,7 @@
                 authStatus.textContent = 'يرجى تسجيل الدخول';
                 authSection.style.display = 'block'; // Show auth section
                 chatContainer.style.display = 'none'; // Hide chat container
-                logoutButton.style.display = 'none'; // Hide logout button
+                // logoutButton.style.display = 'none'; // هذا السطر لم يعد ضرورياً بنفس الطريقة
                 messagesBox.innerHTML = ''; // Clear messages on logout
             }
         });
@@ -348,7 +356,6 @@
             // onSnapshot attaches a listener that listens for real-time updates
             onSnapshot(q, (snapshot) => {
                 // Clear existing messages before rendering new ones to avoid duplicates on re-render
-                // For optimal performance, you might manage individual changes, but this is simpler for now.
                 messagesBox.innerHTML = ''; 
 
                 snapshot.docs.forEach((doc) => {
@@ -403,7 +410,7 @@
         // Ensure chat container is hidden/shown correctly on initial load based on auth state
         // This is primarily handled by onAuthStateChanged, but adding a fallback
         document.addEventListener('DOMContentLoaded', () => {
-            // Initially hide both, onAuthStateChanged will show the correct one
+            // Initially hide chat and show auth section
             authSection.style.display = 'block';
             chatContainer.style.display = 'none';
         });
