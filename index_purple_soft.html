@@ -1,0 +1,1474 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>أدوات إدخال النصوص والبروفايلات — المحسّن</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playpen+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#020617;
+      --bg-soft:#050816;
+      --card:#0b1220;
+      --muted:#9ca3af;
+      --accent:#a855f7;
+      --accent-soft:rgba(168,85,247,0.22);
+      --danger:#ff5c5c;
+      --glass: rgba(15,23,42,0.85);
+      --transition: 180ms;
+      --radius-lg:14px;
+      --radius-pill:999px;
+      --shadow-soft:0 18px 45px rgba(15,23,42,0.75);
+      --border-subtle:rgba(148,163,184,0.20);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body {
+      margin:0;
+      font-family:'Playpen Sans Arabic',system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial;
+      background:
+        radial-gradient(circle at top, rgba(168,85,247,0.12) 0, transparent 45%),
+        radial-gradient(circle at bottom, rgba(126,34,206,0.12) 0, transparent 50%),
+        #020617;
+      color:#e5edf7;
+      direction:rtl;
+      -webkit-font-smoothing:antialiased;
+      padding:24px;
+      line-height:1.6;
+      scroll-behavior:smooth;
+    }
+
+    /* nice scrollbar */
+    body::-webkit-scrollbar{width:8px}
+    body::-webkit-scrollbar-track{background:transparent}
+    body::-webkit-scrollbar-thumb{
+      background:rgba(148,163,184,0.55);
+      border-radius:10px;
+    }
+    body::-webkit-scrollbar-thumb:hover{
+      background:rgba(148,163,184,0.8);
+    }
+
+    .app{
+      max-width:1100px;
+      margin:0 auto;
+      display:grid;
+      grid-template-columns: 1fr 420px;
+      gap:20px;
+      align-items:start;
+      animation:appIn .45s ease-out;
+    }
+
+    @keyframes appIn{
+      from{opacity:0; transform:translateY(12px);}
+      to{opacity:1; transform:translateY(0);}
+    }
+
+    header{
+      grid-column:1/ -1;
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:12px;
+      padding:10px 12px 4px;
+      border-radius:var(--radius-lg);
+      background:linear-gradient(135deg, rgba(15,23,42,0.7), rgba(15,23,42,0.35));
+      border:1px solid rgba(148,163,184,0.28);
+      box-shadow:0 14px 40px rgba(15,23,42,0.65);
+      backdrop-filter:blur(14px);
+    }
+
+    h1{
+      margin:0;
+      font-size:22px;
+      color:var(--accent);
+      letter-spacing:0.3px;
+    }
+
+    .subtitle{
+      color:var(--muted);
+      font-size:13px;
+      margin-top:4px;
+    }
+
+    .small{
+      font-size:12px;
+      color:var(--muted);
+      opacity:0.9;
+    }
+
+    .card{
+      background:
+        linear-gradient(145deg, rgba(15,23,42,0.9), rgba(15,23,42,0.82));
+      border-radius:var(--radius-lg);
+      padding:18px;
+      box-shadow:0 12px 32px rgba(15,23,42,0.85);
+      border:1px solid rgba(148,163,184,0.22);
+      backdrop-filter:blur(18px);
+      transition:
+        transform var(--transition) ease,
+        box-shadow var(--transition) ease,
+        border-color var(--transition) ease,
+        background var(--transition) ease;
+    }
+
+    .card:hover{
+      transform:translateY(-2px);
+      box-shadow:var(--shadow-soft);
+      border-color:rgba(148,163,184,0.4);
+    }
+
+    .main .section{margin-bottom:18px}
+
+    .section strong{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      font-size:14px;
+    }
+    .section strong::before{
+      content:"";
+      width:7px;
+      height:7px;
+      border-radius:999px;
+      background:var(--accent);
+      box-shadow:0 0 0 4px var(--accent-soft);
+    }
+
+    label{
+      display:block;
+      font-weight:700;
+      margin-bottom:6px;
+      font-size:13px;
+    }
+
+    input[type=text],
+    input[type=number],
+    select{
+      width:100%;
+      padding:9px 11px;
+      border-radius:10px;
+      border:1px solid rgba(148,163,184,0.28);
+      background:rgba(15,23,42,0.7);
+      color:inherit;
+      font-size:13px;
+      outline:none;
+      transition:
+        border-color var(--transition) ease,
+        box-shadow var(--transition) ease,
+        background var(--transition) ease,
+        transform 120ms ease;
+    }
+
+    input[type=text]:focus,
+    input[type=number]:focus,
+    select:focus{
+      border-color:var(--accent);
+      box-shadow:0 0 0 1px var(--accent-soft), 0 0 0 999px rgba(15,23,42,0);
+      background:rgba(15,23,42,0.95);
+      transform:translateY(-1px);
+    }
+
+    .button-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:10px;
+    }
+
+    .btn{
+      background:var(--accent);
+      color:#001;
+      padding:9px 14px;
+      border-radius:var(--radius-pill);
+      border:none;
+      cursor:pointer;
+      font-weight:700;
+      font-size:13px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:6px;
+      transition:
+        transform 120ms ease,
+        box-shadow 120ms ease,
+        filter 120ms ease,
+        background 120ms ease,
+        color 120ms ease;
+      box-shadow:0 10px 26px rgba(168,85,247,0.55);
+      white-space:nowrap;
+    }
+
+    .btn:hover{
+      transform:translateY(-1px);
+      filter:brightness(1.05);
+      box-shadow:0 14px 32px rgba(168,85,247,0.55);
+    }
+
+    .btn:active{
+      transform:translateY(0);
+      box-shadow:0 5px 12px rgba(168,85,247,0.55);
+    }
+
+    .btn.ghost{
+      background:rgba(15,23,42,0.6);
+      color:var(--muted);
+      border:1px solid rgba(148,163,184,0.35);
+      box-shadow:none;
+    }
+
+    .btn.ghost:hover{
+      background:rgba(148,163,184,0.18);
+      color:#e5e7eb;
+      border-color:rgba(148,163,184,0.65);
+    }
+
+    .btn:disabled{
+      opacity:.45;
+      cursor:not-allowed;
+      box-shadow:none;
+      transform:none;
+    }
+
+    /* Input list */
+    #mafiaInputFieldsContainer{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      margin-top:10px;
+    }
+
+    .input-group{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      background:var(--glass);
+      padding:8px 10px;
+      border-radius:12px;
+      transition:
+        all var(--transition) ease,
+        border-color var(--transition) ease,
+        background var(--transition) ease;
+      border:1px solid rgba(148,163,184,0.28);
+    }
+
+    .input-group:hover{
+      border-color:var(--accent);
+      background:rgba(15,23,42,0.95);
+    }
+
+    .input-group.fade-out{
+      opacity:0;
+      transform:translateY(-6px);
+      height:0;
+      padding:0 8px;
+      margin:0;
+      border-width:0;
+    }
+
+    .input-number{
+      min-width:30px;
+      text-align:center;
+      color:var(--muted);
+      font-size:13px;
+      font-variant-numeric:tabular-nums;
+    }
+
+    .input-group input{
+      flex:1;
+      background:transparent;
+      color:inherit;
+      border:none;
+      outline:none;
+      font-size:13px;
+    }
+
+    .control-btn{
+      padding:7px 9px;
+      border-radius:10px;
+      border:none;
+      cursor:pointer;
+      font-size:12px;
+      white-space:nowrap;
+    }
+
+    .copy-btn{
+      background:#22c55e;
+      color:#012;
+      border-radius:10px;
+      padding:7px 10px;
+      box-shadow:0 8px 20px rgba(168,85,247,0.55);
+      transition:transform 120ms ease, box-shadow 120ms ease, filter 120ms ease;
+    }
+
+    .copy-btn:hover{
+      filter:brightness(1.04);
+      transform:translateY(-1px);
+      box-shadow:0 11px 26px rgba(168,85,247,0.55);
+    }
+
+    .paste-btn{
+      background:#0ea5e9;
+      color:white;
+      box-shadow:0 8px 20px rgba(14,165,233,0.45);
+    }
+
+    .paste-btn:hover{
+      filter:brightness(1.05);
+      transform:translateY(-1px);
+    }
+
+    .remove-field-btn{
+      background:var(--danger);
+      color:white;
+      box-shadow:0 8px 20px rgba(248,113,113,0.4);
+    }
+
+    /* Right column */
+    .side .section + .section{margin-top:14px}
+
+    .links-output p{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      justify-content:space-between;
+      margin:6px 0;
+    }
+
+    .links-output a{
+      color:var(--accent);
+      text-decoration:none;
+      max-width:72%;
+      overflow-wrap:anywhere;
+      font-size:13px;
+    }
+
+    .links-output a:hover{
+      text-decoration:underline;
+    }
+
+    .links-output .copy-link-btn{
+      background:#15803d;
+      border-radius:var(--radius-pill);
+      padding:6px 11px;
+      color:white;
+      border:none;
+      cursor:pointer;
+      font-size:12px;
+      box-shadow:0 8px 20px rgba(22,163,74,0.55);
+      transition:transform 120ms ease, box-shadow 120ms ease, filter 120ms ease;
+    }
+
+    .links-output .copy-link-btn:hover{
+      transform:translateY(-1px);
+      box-shadow:0 11px 26px rgba(22,163,74,0.75);
+      filter:brightness(1.03);
+    }
+
+    .links-output .copy-link-btn:active{
+      transform:translateY(0);
+      box-shadow:0 5px 12px rgba(22,163,74,0.45);
+    }
+
+    .links-output .copy-link-btn:active{
+      transform:scale(.98);
+    }
+
+    /* saved list */
+    .saved-codes-output .saved-code-item{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      padding:10px 12px;
+      border-radius:12px;
+      align-items:center;
+      background:linear-gradient(135deg, rgba(15,23,42,0.95), rgba(15,23,42,0.75));
+      border:1px solid rgba(148,163,184,0.32);
+      transition:all var(--transition) ease;
+    }
+
+    .saved-codes-output .saved-code-item:hover{
+      border-color:var(--accent);
+      box-shadow:0 12px 28px rgba(15,23,42,0.85);
+      transform:translateY(-1px);
+    }
+
+    .saved-codes-output .saved-code-item.fade-out{
+      opacity:0;
+      transform:translateX(8px);
+      height:0;
+      padding:0;
+      margin:0;
+      border-width:0;
+    }
+
+    .saved-codes-output .code-display{
+      font-family:monospace;
+      color:var(--muted);
+      font-size:12px;
+      margin-top:2px;
+    }
+
+    /* custom urls list */
+    .custom-url-item-wrapper{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      margin-top:10px;
+    }
+
+    .custom-url-item{
+      display:flex;
+      justify-content:space-between;
+      gap:8px;
+      padding:9px 11px;
+      border-radius:11px;
+      align-items:center;
+      background:linear-gradient(135deg, rgba(15,23,42,0.96), rgba(15,23,42,0.8));
+      border:1px solid rgba(148,163,184,0.32);
+      transition:all var(--transition) ease;
+    }
+
+    .custom-url-item:hover{
+      border-color:var(--accent);
+      transform:translateY(-1px);
+      box-shadow:0 10px 24px rgba(15,23,42,0.9);
+    }
+
+    .custom-url-item.fade-out{
+      opacity:0;
+      transform:translateX(8px);
+      height:0;
+      padding:0;
+      margin:0;
+      border-width:0;
+    }
+
+    .custom-url-item .url-display{
+      font-family:monospace;
+      color:var(--muted);
+      font-size:12px;
+      flex-grow:1;
+      overflow-wrap:anywhere;
+    }
+
+    .url-order-controls{
+      display:flex;
+      align-items:center;
+      gap:6px;
+    }
+
+    .url-order-display{
+      width: 24px;
+      text-align: center;
+      color: var(--muted);
+      font-weight: 700;
+      margin-left: 6px;
+      font-size:12px;
+    }
+
+    /* toggle settings button */
+    .toggle-btn{
+      position:fixed;
+      bottom:20px;
+      right:20px;
+      background:linear-gradient(135deg, #22c55e, #14b8a6);
+      color:#001;
+      border:none;
+      border-radius:var(--radius-pill);
+      padding:11px 16px;
+      font-weight:700;
+      font-size:14px;
+      cursor:pointer;
+      box-shadow:0 16px 36px rgba(168,85,247,0.55);
+      z-index:1000;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      transition:
+        transform 140ms ease,
+        box-shadow 140ms ease,
+        filter 140ms ease,
+        background 140ms ease;
+    }
+
+    .toggle-btn::before{
+      content:"";
+      width:9px;
+      height:9px;
+      border-radius:50%;
+      background:#ecfdf5;
+    }
+
+    .toggle-btn:hover{
+      transform:translateY(-2px);
+      filter:brightness(1.04);
+      box-shadow:0 20px 44px rgba(168,85,247,0.55);
+    }
+
+    .toggle-btn:active{
+      transform:translateY(0);
+      box-shadow:0 10px 22px rgba(168,85,247,0.55);
+    }
+
+    #settingsContainer{
+      grid-column: 1 / -1;
+      display:none;
+    }
+    #settingsContainer.visible{
+      display:block;
+      animation:appIn .3s ease-out;
+    }
+
+    footer{
+      grid-column:1/-1;
+      margin-top:18px;
+      color:var(--muted);
+      font-size:12px;
+      text-align:center;
+      opacity:0.9;
+    }
+
+    /* search */
+    .search-row{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      margin-top:8px;
+    }
+    .search-input{
+      flex:1;
+      padding:8px 10px;
+      border-radius:10px;
+      border:1px solid rgba(148,163,184,0.28);
+      background:rgba(15,23,42,0.8);
+      color:inherit;
+      font-size:13px;
+    }
+
+    /* loader */
+    .loader{
+      display:inline-block;
+      width:18px;
+      height:18px;
+      border:3px solid rgba(148,163,184,0.18);
+      border-top-color:var(--accent);
+      border-radius:50%;
+      animation:spin 800ms linear infinite;
+      vertical-align:middle;
+      margin-left:4px;
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* toast */
+    .toast{
+      position:fixed;
+      bottom:20px;
+      left:20px;
+      background:rgba(15,23,42,0.95);
+      color:#fff;
+      padding:9px 13px;
+      border-radius:10px;
+      z-index:2000;
+      opacity:0;
+      transition:opacity .25s, transform .25s;
+      font-size:12px;
+      box-shadow:0 12px 28px rgba(15,23,42,0.95);
+      border:1px solid rgba(148,163,184,0.4);
+      transform:translateY(6px);
+    }
+    .toast.show{
+      opacity:1;
+      transform:translateY(0);
+    }
+
+    @media (max-width:980px){
+      .app{
+        grid-template-columns:1fr;
+      }
+      .side{
+        order:-1;
+      }
+    }
+
+    @media (max-width:640px){
+      body{
+        padding:14px;
+      }
+      header{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:6px;
+      }
+      .toggle-btn{
+        right:16px;
+        bottom:16px;
+        padding-inline:13px;
+      }
+      .links-output a{
+        max-width:65%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div>
+        <h1>مولد الروابط الذكي — لوحة السيطرة</h1>
+        <div class="subtitle">نسخة محسّنة — كل المزايا محفوظة + أداء وواجهة أفضل</div>
+      </div>
+      <div class="small">حفظ تلقائي مؤقت • يدعم Firebase • اختصارات للنسخ</div>
+    </header>
+
+    <main class="main card">
+      <section class="section">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+          <strong>أداة إدخال النصوص</strong>
+          <div class="small">أضف أكثر من خانة — احفظ السجلات في Firebase</div>
+        </div>
+
+        <div id="mafiaInputFieldsContainer"></div>
+        <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
+          <button class="btn" id="addFieldBtn"><i class="fas fa-plus-circle"></i> إضافة خانة</button>
+          <button class="btn ghost" id="clearAllBtn"><i class="fas fa-trash"></i> مسح الكل</button>
+        </div>
+      </section>
+
+      <section class="section">
+        <strong>السجلات (Records)</strong>
+        <div style="display:flex;gap:10px;margin-top:8px;align-items:center;flex-wrap:wrap">
+          <select id="mafiaRecordSelector" style="flex:1;min-width:140px"></select>
+          <button class="btn" id="saveAsBtn"><i class="fas fa-save"></i> حفظ باسم</button>
+          <button class="btn ghost" id="deleteRecordBtn"><i class="fas fa-trash-alt"></i> حذف</button>
+        </div>
+        <div class="small" style="margin-top:8px">السجل الحالي محفوظ آلياً مع تأخير (debounced) لتقليل عمليات الكتابة على Firebase.</div>
+      </section>
+
+      <section class="section">
+        <strong>مولّد روابط البروفايلات</strong>
+        <div class="small">أدخل كود بروفايل (Base64) واضغط توليد</div>
+        <label for="profileCode" style="margin-top:8px">كود البروفايل</label>
+        <input type="text" id="profileCode" placeholder="مثال: NDIyNDk2MjQ5Mw==">
+        <div class="button-row">
+          <button class="btn" id="genProfileBtn">توليد الروابط</button>
+          <button class="btn ghost" id="openAllProfileBtn">فتح كل الروابط</button>
+        </div>
+        <div id="outputLinks" class="links-output" style="margin-top:10px">لا توجد روابط.</div>
+      </section>
+
+      <section class="section">
+        <strong>مولّد روابط تسجيل الدخول</strong>
+        <label for="loginCode" style="margin-top:6px">كود (اختياري)</label>
+        <input type="text" id="loginCode" placeholder="أي كود أو اتركه فارغًا">
+        <div class="button-row">
+          <button class="btn" id="genLoginBtn">توليد روابط الدخول</button>
+          <button class="btn ghost" id="openAllLoginBtn">فتح</button>
+        </div>
+        <div id="outputLoginLinks" class="links-output" style="margin-top:10px">لا توجد روابط.</div>
+      </section>
+      
+      <section class="section">
+        <strong>السجل الافتراضي</strong>
+        <div class="small">استخدم السجل الافتراضي للمهام السريعة</div>
+        <div style="margin-top:10px"><button class="btn ghost" id="loadDefaultBtn">تحميل افتراضي</button></div>
+      </section>
+    </main>
+
+    <div class="side">
+      <div class="card">
+        <section class="section">
+          <strong>إدارة أكواد البروفايلات المحفوظة</strong>
+          <div class="small">احفظ كود باسم — يعرض الأكواد مع أزرار تحميل/نسخ/حذف</div>
+
+          <div class="search-row">
+            <input type="text" id="savedSearch" class="search-input" placeholder="ابحث في الأكواد المحفوظة...">
+            <div id="savedLoader" style="display:none" class="loader" title="جاري التحميل"></div>
+          </div>
+
+          <label for="codeName" style="margin-top:8px">اسم الكود</label>
+          <input type="text" id="codeName" placeholder="مثال: بروفايل صديق">
+          <div class="button-row" style="margin-top:8px">
+            <button class="btn" id="saveCodeBtn">حفظ الكود</button>
+          </div>
+          <div id="savedCodesOutput" class="saved-codes-output" style="margin-top:12px">لا توجد أكواد محفوظة.</div>
+        </section>
+      </div>
+    </div>
+
+    <div id="settingsContainer" class="card">
+      <section class="section">
+        <strong>إدارة المواقع المخصصة</strong>
+        <div class="small">أضف، عدّل أو احذف روابط المواقع التي تريدها. يتم حفظ التعديلات تلقائياً.</div>
+        
+        <label for="profileUrlInput" style="margin-top:8px">إضافة رابط بروفايل</label>
+        <div style="display:flex; gap:8px;">
+          <input type="text" id="profileUrlInput" placeholder="https://example.com/profile/" style="flex:1;">
+          <button class="btn" id="addProfileUrlBtn">أضف</button>
+        </div>
+        <div id="profileUrlList" class="custom-url-item-wrapper"></div>
+        
+        <label for="loginUrlInput" style="margin-top:16px">إضافة رابط تسجيل دخول</label>
+        <div style="display:flex; gap:8px;">
+          <input type="text" id="loginUrlInput" placeholder="https://example.com/login" style="flex:1;">
+          <button class="btn" id="addLoginUrlBtn">أضف</button>
+        </div>
+        <div id="loginUrlList" class="custom-url-item-wrapper"></div>
+      </section>
+    </div>
+
+    <footer>🌟 تم تحسين الأداء: حفظ آلي مؤجل، تحديث DOM بكفاءة، ومزامنة كاملة مع Firebase.</footer>
+  </div>
+
+  <button id="toggleSettingsBtn" class="toggle-btn">
+    ⚙️ الإعدادات
+  </button>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script type="module">
+    // --------------------------- Firebase init ---------------------------
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
+    import { getFirestore, doc, getDoc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyC4_IUaC1uiqq05TKpL348kXt1aNJf1jzM",
+      authDomain: "mafia-3l-entag.firebaseapp.com",
+      projectId: "mafia-3l-entag",
+      storageBucket: "mafia-3l-entag.firebasestorage.app",
+      messagingSenderId: "995219729881",
+      appId: "1:995219729881:web:5d128bce8987d812adfdc8",
+      measurementId: "G-Z7ZMFV8VV8"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // --------------------------- State & constants ---------------------------
+    const state = {
+      mafiaInputCounter: 0,
+      currentRecordName: 'السجل الافتراضي',
+      profileBaseUrls: [],
+      loginBaseUrls: []
+    };
+
+    const MAFIA_RECORD_NAMES_KEY = 'mafiaRecordNames';
+    const MAFIA_CURRENT_RECORD_KEY = 'mafiaCurrentRecord';
+    const MAFIA_DEFAULT_RECORD_NAME = 'السجل الافتراضي';
+    const PROFILE_SAVED_CODES_KEY = 'savedProfileCodesList';
+    const CUSTOM_URLS_KEY = 'customUrls';
+
+    const defaultProfileUrls = [
+      "https://mixu.chat/profile/",
+      "https://1v1chat.me/profile/",
+      "https://livcam.me/profile/",
+      "https://tinchat.me/profile/",
+      "https://livuapp.com/profile/",
+      "https://tumile.chat/profile/"
+    ];
+
+    const defaultLoginUrls = [
+      "https://mixu.chat/login",
+      "https://1v1chat.me/login",
+      "https://livcam.me/login",
+      "https://tinchat.me/login",
+      "https://livuapp.com/login",
+      "https://tumile.chat/login"
+    ];
+
+    // --------------------------- Helpers ---------------------------
+    const el = (id) => document.getElementById(id);
+    const showToast = (msg) => { const t = el('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 1800); };
+    const debounce = (func, wait) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => func(...a), wait); }; };
+    const wait = (ms) => new Promise(r => setTimeout(r, ms));
+    const escapeHtml = (s) => s ? String(s).replace(/[&<>"]+/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&quot;" }[c] || c)) : '';
+    const safeGetDoc = async (path) => {
+      try { return await getDoc(doc(db, ...path)); } catch (e) { console.error('safeGetDoc', e); throw e; }
+    };
+    const safeSetDoc = async (path, data) => {
+      try { await setDoc(doc(db, ...path), data); } catch (e) { console.error('safeSetDoc', e); throw e; }
+    };
+    const safeDeleteDoc = async (path) => {
+      try { await deleteDoc(doc(db, ...path)); } catch (e) { console.error('safeDeleteDoc', e); throw e; }
+    };
+
+    // Helper for creating and styling buttons
+    const createButton = (text, className, handler, title = '') => {
+      const btn = document.createElement('button');
+      btn.className = className;
+      btn.textContent = text;
+      btn.title = title;
+      btn.addEventListener('click', handler);
+      return btn;
+    };
+
+    // Unified copy function
+    const copyToClipboard = async (text, btn) => {
+      try {
+        await navigator.clipboard.writeText(text);
+        btn.textContent = '✔';
+        setTimeout(() => btn.textContent = 'نسخ', 900);
+        showToast('✅ تم النسخ');
+      } catch (e) {
+        showToast('❌ فشل النسخ');
+      }
+    };
+
+    // --------------------------- Custom URLs Management ---------------------------
+    const getCustomUrls = async () => {
+      try {
+        const profileSnap = await safeGetDoc(["customUrls", "profile"]);
+        const loginSnap = await safeGetDoc(["customUrls", "login"]);
+        const profileUrls = profileSnap.exists() && profileSnap.data().urls ? profileSnap.data().urls : defaultProfileUrls;
+        const loginUrls = loginSnap.exists() && loginSnap.data().urls ? loginSnap.data().urls : defaultLoginUrls;
+        return { profile: profileUrls, login: loginUrls };
+      } catch (e) {
+        console.error('Failed to get custom URLs, using defaults.', e);
+        return { profile: defaultProfileUrls, login: defaultLoginUrls };
+      }
+    };
+    
+    // Updated functions to handle reordering logic
+    const saveCustomUrls = async (type, urls) => {
+      try {
+        await safeSetDoc(["customUrls", type], { urls: urls, lastUpdated: new Date() });
+        showToast('✅ تم حفظ المواقع');
+      } catch (e) {
+        console.error('Failed to save custom URLs', e);
+        showToast('❌ فشل حفظ المواقع');
+      }
+    };
+    
+    const reorderUrlsSimplified = (arr, fromIndex, toIndex) => {
+      const movedItem = arr.splice(fromIndex, 1)[0];
+      arr.splice(toIndex, 0, movedItem);
+      return arr;
+    };
+    
+    const renderCustomUrls = (urls, containerId, type) => {
+      const container = el(containerId);
+      container.innerHTML = '';
+      
+      urls.forEach((url, index) => {
+        const item = document.createElement('div');
+        item.className = 'custom-url-item';
+        
+        const urlDisplay = document.createElement('div');
+        urlDisplay.className = 'url-display';
+        urlDisplay.textContent = url;
+        
+        const controls = document.createElement('div');
+        controls.className = 'url-order-controls';
+        
+        const orderDisplay = document.createElement('div');
+        orderDisplay.className = 'url-order-display';
+        orderDisplay.textContent = index + 1;
+
+        const deleteBtn = createButton('حذف', 'btn ghost', () => {
+          item.classList.add('fade-out');
+          setTimeout(() => {
+            const newUrls = urls.filter(u => u !== url);
+            state[`${type}BaseUrls`] = newUrls;
+            saveCustomUrls(type, newUrls);
+            renderCustomUrls(newUrls, containerId, type);
+          }, 220);
+        });
+        deleteBtn.style.background = 'var(--danger)';
+        deleteBtn.style.color = '#fff';
+
+        const upBtn = createButton('▲', 'btn ghost', () => {
+          if (index > 0) {
+            const newUrls = reorderUrlsSimplified(urls, index, index - 1);
+            state[`${type}BaseUrls`] = newUrls;
+            saveCustomUrls(type, newUrls);
+            renderCustomUrls(newUrls, containerId, type);
+          }
+        });
+        
+        const downBtn = createButton('▼', 'btn ghost', () => {
+          if (index < urls.length - 1) {
+            const newUrls = reorderUrlsSimplified(urls, index, index + 1);
+            state[`${type}BaseUrls`] = newUrls;
+            saveCustomUrls(type, newUrls);
+            renderCustomUrls(newUrls, containerId, type);
+          }
+        });
+
+        controls.append(orderDisplay, upBtn, downBtn, deleteBtn);
+        item.append(urlDisplay, controls);
+        container.appendChild(item);
+      });
+    };
+
+    // --------------------------- Records CRUD ---------------------------`
+    const saveRecord = async (recordName) => {
+      const inputElements = document.querySelectorAll('#mafiaInputFieldsContainer input[type="text"]');
+      const dataToSave = Array.from(inputElements).map(i => i.value);
+      try {
+        const isDefault = recordName === MAFIA_DEFAULT_RECORD_NAME;
+        const docPath = isDefault ? ["mafiaDefaultRecord", "default"] : ["mafiaRecords", recordName];
+
+        await safeSetDoc(docPath, { data: dataToSave, lastUpdated: new Date() });
+
+        if (!isDefault) {
+          let recordNames = await getRecordNamesFromFirebase();
+          if (!recordNames.includes(recordName)) {
+            recordNames.push(recordName);
+            await safeSetDoc(["mafiaMetadata", MAFIA_RECORD_NAMES_KEY], { names: recordNames });
+          }
+          await safeSetDoc(["mafiaMetadata", MAFIA_CURRENT_RECORD_KEY], { current: recordName });
+          updateRecordSelector(recordName);
+        }
+
+        state.currentRecordName = recordName;
+        localStorage.removeItem('mafia_temp_' + recordName);
+
+        return true;
+      } catch (e) {
+        console.error('saveRecord', e);
+        showToast('❌ فشل حفظ السجل');
+        return false;
+      }
+    };
+
+    const loadRecord = async (recordName) => {
+      const container = el('mafiaInputFieldsContainer');
+      container.innerHTML = '';
+      try {
+        const isDefault = recordName === MAFIA_DEFAULT_RECORD_NAME;
+        const docPath = isDefault ? ["mafiaDefaultRecord", "default"] : ["mafiaRecords", recordName];
+
+        const docSnap = await safeGetDoc(docPath);
+        if (docSnap.exists()) {
+          const dataArray = docSnap.data().data || [];
+          state.mafiaInputCounter = 0;
+          for (const v of dataArray) addInputField(v, false);
+        } else {
+          state.mafiaInputCounter = 0;
+          addInputField('', false);
+        }
+        updateInputNumbers();
+
+        if (!isDefault) {
+          await safeSetDoc(["mafiaMetadata", MAFIA_CURRENT_RECORD_KEY], { current: recordName });
+          updateRecordSelector(recordName);
+        }
+
+        state.currentRecordName = recordName;
+        localStorage.removeItem('mafia_temp_' + recordName);
+
+        return true;
+      } catch (e) {
+        console.error('loadRecord', e);
+        showToast('❌ فشل تحميل السجل — سيتم استعادة الكاش إن وُجد');
+        // Fallback to local cache
+        try {
+          const tmp = localStorage.getItem('mafia_temp_' + recordName);
+          if (tmp) {
+            const arr = JSON.parse(tmp);
+            if (Array.isArray(arr) && arr.length > 0) {
+              container.innerHTML = '';
+              state.mafiaInputCounter = 0;
+              arr.forEach(v => addInputField(v, false));
+              updateInputNumbers();
+              showToast('⚠ تم استعادة البيانات من الكاش المحلي');
+            }
+          }
+        } catch (er) {
+          console.error('restore cache', er);
+        }
+        return false;
+      }
+    };
+
+    const getRecordNamesFromFirebase = async () => {
+      try {
+        const docSnap = await safeGetDoc(["mafiaMetadata", MAFIA_RECORD_NAMES_KEY]);
+        let namesArray = docSnap.exists() && docSnap.data().names ? docSnap.data().names : [];
+        if (!namesArray.includes(MAFIA_DEFAULT_RECORD_NAME)) namesArray.unshift(MAFIA_DEFAULT_RECORD_NAME);
+        else { namesArray = namesArray.filter(n => n !== MAFIA_DEFAULT_RECORD_NAME); namesArray.unshift(MAFIA_DEFAULT_RECORD_NAME); }
+        return namesArray;
+      } catch (e) { console.error('getRecordNames', e); return [MAFIA_DEFAULT_RECORD_NAME]; }
+    };
+
+    const updateRecordSelector = async (selectedName = '') => {
+      const selector = el('mafiaRecordSelector');
+      selector.innerHTML = '';
+      const recordNames = await getRecordNamesFromFirebase();
+      for (const name of recordNames) {
+        const opt = document.createElement('option');
+        opt.value = name;
+        opt.textContent = name;
+        if (name === selectedName) opt.selected = true;
+        selector.appendChild(opt);
+      }
+      const deleteBtn = el('deleteRecordBtn');
+      if (deleteBtn) deleteBtn.disabled = (recordNames.length === 1 && recordNames[0] === MAFIA_DEFAULT_RECORD_NAME);
+    };
+
+    const saveRecordAsNew = async () => {
+      let recordName = prompt('ادخل اسم للسجل الجديد:');
+      if (recordName && recordName.trim() !== '') {
+        recordName = recordName.trim();
+        const recordNames = await getRecordNamesFromFirebase();
+        if (recordNames.includes(recordName)) { if (!confirm(`السجل "${recordName}" موجود، استبداله؟`)) return; }
+        const ok = await saveRecord(recordName);
+        if (ok) {
+          await safeSetDoc(["mafiaRecords", MAFIA_DEFAULT_RECORD_NAME], { data: [], lastUpdated: new Date() });
+          await loadRecord(recordName);
+          showToast('✅ تم الحفظ');
+        }
+      } else if (recordName !== null) showToast('⚠ يجب ادخال اسم');
+    };
+
+    const loadSelectedRecord = async () => {
+      const sel = el('mafiaRecordSelector');
+      if (sel.value) await loadRecord(sel.value);
+    };
+
+    const deleteSelectedRecord = async () => {
+      const sel = el('mafiaRecordSelector');
+      const recordToDelete = sel.value;
+      if (recordToDelete === MAFIA_DEFAULT_RECORD_NAME) {
+        showToast('⚠ لا يمكنك حذف السجل الافتراضي');
+        return;
+      }
+      if (!confirm('تأكيد حذف ' + recordToDelete + '؟')) return;
+      try {
+        await safeDeleteDoc(["mafiaRecords", recordToDelete]);
+        let names = await getRecordNamesFromFirebase();
+        names = names.filter(n => n !== recordToDelete);
+        await safeSetDoc(["mafiaMetadata", MAFIA_RECORD_NAMES_KEY], { names });
+        const currentDoc = await safeGetDoc(["mafiaMetadata", MAFIA_CURRENT_RECORD_KEY]);
+        const current = currentDoc.exists() ? currentDoc.data().current : MAFIA_DEFAULT_RECORD_NAME;
+        if (current === recordToDelete) await loadRecord(MAFIA_DEFAULT_RECORD_NAME);
+        await updateRecordSelector(current === recordToDelete ? MAFIA_DEFAULT_RECORD_NAME : current);
+        localStorage.removeItem('mafia_temp');
+        localStorage.removeItem('mafia_temp_' + recordToDelete);
+        showToast('✅ تم الحذف');
+      } catch (e) {
+        console.error('delete', e);
+        showToast('❌ خطأ في الحذف');
+      }
+    };
+
+    // --------------------------- Input fields UI ---------------------------
+    const createInputGroupElement = (index, initialValue) => {
+      const div = document.createElement('div');
+      div.className = 'input-group';
+
+      const removeBtn = createButton('حذف', 'remove-field-btn control-btn', () => {
+        div.classList.add('fade-out');
+        setTimeout(() => {
+          div.remove();
+          updateInputNumbers();
+          debouncedSave();
+        }, 220);
+      }, 'حذف الخانة');
+
+      const numberDiv = document.createElement('div');
+      numberDiv.className = 'input-number';
+      numberDiv.textContent = index + '.';
+
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.id = 'mafiaTextInput' + index;
+      input.value = initialValue || '';
+      input.placeholder = 'أدخل النص...';
+      input.addEventListener('input', debouncedSave);
+
+      const copyBtn = createButton('نسخ', 'copy-btn control-btn', () => copyToClipboard(input.value, copyBtn), 'نسخ');
+      const pasteBtn = createButton('لصق', 'paste-btn control-btn', async () => {
+        try {
+          const t = await navigator.clipboard.readText();
+          input.value = t;
+          debouncedSave();
+          showToast('✅ تم اللصق');
+        } catch (e) {
+          showToast('❌ فشل اللصق');
+        }
+      }, 'لصق');
+
+      div.append(removeBtn, numberDiv, input, copyBtn, pasteBtn);
+      return div;
+    };
+
+    const addInputField = (initialValue = '', saveAfterAdd = true) => {
+      state.mafiaInputCounter++;
+      const container = el('mafiaInputFieldsContainer');
+      const div = createInputGroupElement(state.mafiaInputCounter, initialValue);
+      container.appendChild(div);
+      if (saveAfterAdd) debouncedSave();
+    };
+
+    const updateInputNumbers = () => {
+      const groups = document.querySelectorAll('#mafiaInputFieldsContainer .input-group');
+      groups.forEach((g, i) => {
+        const n = g.querySelector('.input-number');
+        if (n) n.textContent = (i + 1) + '.';
+      });
+      state.mafiaInputCounter = groups.length;
+    };
+
+    const clearCurrentDataAndStartNew = async () => {
+      if (!confirm('مسح كل محتوى السجل الحالي؟')) return;
+      el('mafiaInputFieldsContainer').querySelectorAll('.input-group').forEach(g => g.classList.add('fade-out'));
+      await wait(180);
+      el('mafiaInputFieldsContainer').innerHTML = '';
+      state.mafiaInputCounter = 0;
+      addInputField('', false);
+      try {
+        await safeSetDoc(["mafiaRecords", MAFIA_DEFAULT_RECORD_NAME], { data: [], lastUpdated: new Date() });
+        await safeSetDoc(["mafiaMetadata", MAFIA_CURRENT_RECORD_KEY], { current: MAFIA_DEFAULT_RECORD_NAME });
+        localStorage.removeItem('mafia_temp');
+        localStorage.removeItem('mafia_temp_' + MAFIA_DEFAULT_RECORD_NAME);
+        await updateRecordSelector(MAFIA_DEFAULT_RECORD_NAME);
+        showToast('✅ تم المسح');
+      } catch (e) {
+        console.error(e);
+        showToast('❌ حدث خطأ');
+      }
+    };
+
+    // --------------------------- Saving (debounced) ---------------------------
+    const debouncedSave = debounce(async () => {
+      try {
+        const inputs = document.querySelectorAll('#mafiaInputFieldsContainer input[type="text"]');
+        const arr = Array.from(inputs).map(i => i.value);
+        const key = 'mafia_temp_' + state.currentRecordName;
+        localStorage.setItem(key, JSON.stringify(arr));
+        const saveTo = state.currentRecordName;
+        await safeSetDoc(["mafiaRecords", saveTo], { data: arr, lastUpdated: new Date() });
+      } catch (e) {
+        console.error('debouncedSave', e);
+      }
+    }, 900);
+
+    // --------------------------- Links generation (utils) ---------------------------
+    const createLinkRow = (fullUrl, showDelete = false) => {
+      const p = document.createElement('p');
+      p.style.display = 'flex';
+      p.style.gap = '8px';
+      p.style.alignItems = 'center';
+
+      const a = document.createElement('a');
+      a.href = fullUrl;
+      a.target = '_blank';
+      a.textContent = fullUrl;
+      
+      const copyBtn = createButton('نسخ', 'copy-link-btn', () => copyToClipboard(fullUrl, copyBtn));
+      
+      p.append(a, copyBtn);
+      
+      if (showDelete) {
+        const delBtn = createButton('حذف', 'copy-link-btn', () => deleteGeneratedProfileCode(fullUrl));
+        delBtn.style.background = 'var(--danger)';
+        delBtn.style.marginLeft = '6px';
+        p.appendChild(delBtn);
+      }
+
+      return p;
+    };
+
+    const deleteGeneratedProfileCode = async (fullUrl) => {
+      try {
+        const last = localStorage.getItem('lastCode');
+        if (last && fullUrl.endsWith(last)) localStorage.removeItem('lastCode');
+        const code = state.profileBaseUrls.reduce((acc, base) => fullUrl.startsWith(base) ? fullUrl.slice(base.length) : acc, null);
+        if (code) {
+          const saved = await getSavedCodes();
+          const filtered = saved.filter(s => s.code !== code);
+          if (filtered.length !== saved.length) {
+            await saveCodes(filtered);
+            await renderSavedCodes();
+          }
+        }
+        generateProfileLinks();
+        showToast('✅ تم الحذف من التخزين المحلي (إن وجد)');
+      } catch (e) {
+        console.error(e);
+        showToast('❌ حدث خطأ أثناء الحذف');
+      }
+    };
+
+    const generateProfileLinks = () => {
+      const code = el('profileCode').value.trim();
+      const out = el('outputLinks');
+      out.innerHTML = '';
+      if (!code) {
+        out.innerHTML = '<p class="small">⚠ الرجاء إدخال كود البروفايل.</p>';
+        return;
+      }
+      const frag = document.createDocumentFragment();
+      state.profileBaseUrls.forEach(base => {
+        const full = base + code;
+        frag.appendChild(createLinkRow(full, true));
+      });
+      out.appendChild(frag);
+      localStorage.setItem('lastCode', code);
+    };
+
+    const openAllProfileLinks = () => {
+      const links = el('outputLinks').querySelectorAll('a');
+      if (links.length === 0) { showToast('لا توجد روابط'); return; }
+      if (!confirm('فتح ' + links.length + ' رابط؟')) return;
+      links.forEach(a => window.open(a.href, '_blank'));
+    };
+
+    const generateLoginLinks = () => {
+      const code = el('loginCode').value.trim();
+      const out = el('outputLoginLinks');
+      out.innerHTML = '';
+      const frag = document.createDocumentFragment();
+      state.loginBaseUrls.forEach(base => {
+        const full = base + (code ? '/' + code : '');
+        frag.appendChild(createLinkRow(full));
+      });
+      out.appendChild(frag);
+    };
+
+    const openAllLoginLinks = () => {
+      const links = el('outputLoginLinks').querySelectorAll('a');
+      if (links.length === 0) { showToast('لا توجد روابط'); return; }
+      if (!confirm('فتح ' + links.length + ' رابط؟')) return;
+      links.forEach(a => window.open(a.href, '_blank'));
+    };
+
+    // --------------------------- Saved profile codes (Firestore) ---------------------------
+    const getSavedCodes = async () => {
+      try {
+        const docSnap = await safeGetDoc(["profileData", PROFILE_SAVED_CODES_KEY]);
+        return docSnap.exists() && docSnap.data().codes ? docSnap.data().codes : [];
+      } catch (e) {
+        console.error('getSaved', e);
+        return [];
+      }
+    };
+
+    const saveCodes = async (codesArray) => {
+      try {
+        await safeSetDoc(["profileData", PROFILE_SAVED_CODES_KEY], { codes: codesArray });
+        return true;
+      } catch (e) {
+        console.error('saveCodes', e);
+        showToast('❌ فشل الحفظ');
+        return false;
+      }
+    };
+
+    const saveProfileCode = async () => {
+      const profileCode = el('profileCode').value.trim();
+      const codeName = el('codeName').value.trim();
+      if (!profileCode) { showToast('⚠ ادخل كود'); return; }
+      if (!codeName) { showToast('⚠ ادخل اسم'); return; }
+      let saved = await getSavedCodes();
+      if (saved.some(s => s.name === codeName)) { showToast('⚠ الاسم مستخدم'); return; }
+      if (saved.some(s => s.code === profileCode)) { showToast('⚠ الكود موجود'); return; }
+      saved.push({ name: codeName, code: profileCode });
+      if (await saveCodes(saved)) {
+        await renderSavedCodes();
+        el('codeName').value = '';
+        el('profileCode').value = '';
+        showToast('✅ تم الحفظ');
+      }
+    };
+
+    const deleteProfileCode = async (codeName) => {
+      if (!confirm('حذف ' + codeName + '؟')) return;
+      let saved = await getSavedCodes();
+      saved = saved.filter(s => s.name !== codeName);
+      if (await saveCodes(saved)) {
+        await renderSavedCodes();
+        showToast('✅ تم الحذف');
+      }
+    };
+
+    const loadProfileCode = (code) => {
+      el('profileCode').value = code;
+      showToast('✅ تم تحميل الكود');
+    };
+
+    /**
+     * New function to handle editing a saved profile code.
+     */
+    const editProfileCode = async (oldCodeName, oldCode) => {
+        let saved = await getSavedCodes();
+        const newCodeName = prompt(`تعديل اسم الكود "${oldCodeName}" إلى:`, oldCodeName);
+        if (newCodeName === null) return; // User cancelled
+        const newCodeValue = prompt(`تعديل قيمة الكود "${oldCode}" إلى:`, oldCode);
+        if (newCodeValue === null) return; // User cancelled
+        
+        const newNameTrimmed = newCodeName.trim();
+        const newCodeTrimmed = newCodeValue.trim();
+
+        if (newNameTrimmed === '' || newCodeTrimmed === '') {
+            showToast('⚠ يجب إدخال اسم وقيمة غير فارغين');
+            return;
+        }
+
+        // Check if the new name is already in use by another code
+        const isNameUsed = saved.some(s => s.name === newNameTrimmed && s.name !== oldCodeName);
+        if (isNameUsed) {
+            showToast('⚠ الاسم الجديد مستخدم بالفعل');
+            return;
+        }
+
+        // Find and update the code
+        const updatedSaved = saved.map(item => {
+            if (item.name === oldCodeName) {
+                return { name: newNameTrimmed, code: newCodeTrimmed };
+            }
+            return item;
+        });
+
+        if (await saveCodes(updatedSaved)) {
+            await renderSavedCodes();
+            showToast('✅ تم تحديث الكود');
+        }
+    };
+
+    const renderSavedCodes = async (filter = '') => {
+      const saved = await getSavedCodes();
+      const out = el('savedCodesOutput');
+      el('savedLoader').style.display = 'none';
+      const list = saved.filter(s => !filter || s.name.includes(filter) || s.code.includes(filter));
+      
+      out.innerHTML = ''; // Clear previous content
+
+      if (list.length === 0) {
+        const p = document.createElement('p');
+        p.textContent = 'لا توجد أكواد محفوظة.';
+        out.appendChild(p);
+        return;
+      }
+
+      const frag = document.createDocumentFragment();
+      for (const item of list) {
+        const wrap = document.createElement('div');
+        wrap.className = 'saved-code-item';
+
+        const left = document.createElement('div');
+        const nameStrong = document.createElement('strong');
+        nameStrong.textContent = escapeHtml(item.name);
+        const codeDiv = document.createElement('div');
+        codeDiv.className = 'code-display';
+        codeDiv.textContent = escapeHtml(item.code);
+        left.append(nameStrong, codeDiv);
+
+        const right = document.createElement('div');
+        right.style.display = 'flex';
+        right.style.gap = '6px';
+        
+        const loadBtn = createButton('تحميل', 'btn ghost', () => loadProfileCode(item.code));
+        const copyBtn = createButton('نسخ', 'btn', () => copyToClipboard(item.code, copyBtn));
+        const editBtn = createButton('تعديل', 'btn ghost', () => editProfileCode(item.name, item.code));
+        const delBtn = createButton('مسح', 'btn ghost', async () => {
+          wrap.classList.add('fade-out');
+          await wait(220);
+          deleteProfileCode(item.name);
+        });
+        
+        right.append(loadBtn, copyBtn, editBtn, delBtn);
+        wrap.append(left, right);
+        frag.appendChild(wrap);
+      }
+      out.appendChild(frag);
+    };
+
+    // --------------------------- Init on load ---------------------------
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Load custom URLs first
+      const urls = await getCustomUrls();
+      state.profileBaseUrls = urls.profile;
+      state.loginBaseUrls = urls.login;
+      renderCustomUrls(state.profileBaseUrls, 'profileUrlList', 'profile');
+      renderCustomUrls(state.loginBaseUrls, 'loginUrlList', 'login');
+
+      // Wire UI buttons
+      el('addFieldBtn').addEventListener('click', () => addInputField('', true));
+      el('clearAllBtn').addEventListener('click', clearCurrentDataAndStartNew);
+      el('saveAsBtn').addEventListener('click', saveRecordAsNew);
+      el('deleteRecordBtn').addEventListener('click', deleteSelectedRecord);
+      el('genProfileBtn').addEventListener('click', generateProfileLinks);
+      el('openAllProfileBtn').addEventListener('click', openAllProfileLinks);
+      el('genLoginBtn').addEventListener('click', generateLoginLinks);
+      el('openAllLoginBtn').addEventListener('click', openAllLoginLinks);
+      el('saveCodeBtn').addEventListener('click', saveProfileCode);
+      el('loadDefaultBtn').addEventListener('click', () => loadRecord(MAFIA_DEFAULT_RECORD_NAME));
+      el('mafiaRecordSelector').addEventListener('change', loadSelectedRecord);
+      el('savedSearch').addEventListener('input', debounce((e) => renderSavedCodes(e.target.value.trim()), 250));
+      
+      el('addProfileUrlBtn').addEventListener('click', () => {
+        const url = el('profileUrlInput').value.trim();
+        if (url && !state.profileBaseUrls.includes(url)) {
+          state.profileBaseUrls.push(url);
+          el('profileUrlInput').value = '';
+          saveCustomUrls('profile', state.profileBaseUrls);
+          renderCustomUrls(state.profileBaseUrls, 'profileUrlList', 'profile');
+        } else if (url) {
+          showToast('⚠ الرابط موجود بالفعل');
+        } else {
+          showToast('⚠ أدخل رابط صالح');
+        }
+      });
+      el('addLoginUrlBtn').addEventListener('click', () => {
+        const url = el('loginUrlInput').value.trim();
+        if (url && !state.loginBaseUrls.includes(url)) {
+          state.loginBaseUrls.push(url);
+          el('loginUrlInput').value = '';
+          saveCustomUrls('login', state.loginBaseUrls);
+          renderCustomUrls(state.loginBaseUrls, 'loginUrlList', 'login');
+        } else if (url) {
+          showToast('⚠ الرابط موجود بالفعل');
+        } else {
+          showToast('⚠ أدخل رابط صالح');
+        }
+      });
+      el('toggleSettingsBtn').addEventListener('click', () => {
+        const settingsContainer = el('settingsContainer');
+        settingsContainer.classList.toggle('visible');
+      });
+
+
+      // Initial load of records
+      await updateRecordSelector();
+      try {
+        const currentRecordDoc = await safeGetDoc(["mafiaMetadata", MAFIA_CURRENT_RECORD_KEY]);
+        const currentRecordName = currentRecordDoc.exists() ? currentRecordDoc.data().current : MAFIA_DEFAULT_RECORD_NAME;
+        state.currentRecordName = currentRecordName;
+        await loadRecord(currentRecordName);
+      } catch (e) {
+        // Fallback to local temp if Firestore unreachable
+        const tmp = localStorage.getItem('mafia_temp');
+        if (tmp) {
+          try {
+            const arr = JSON.parse(tmp);
+            if (Array.isArray(arr) && arr.length > 0) {
+              document.getElementById('mafiaInputFieldsContainer').innerHTML = '';
+              state.mafiaInputCounter = 0;
+              arr.forEach(v => addInputField(v, false));
+              updateInputNumbers();
+              showToast('⚠ تعملت من الكاش');
+            }
+          } catch (err) {}
+        }
+      }
+
+      // Ensure at least one field
+      if (document.querySelectorAll('#mafiaInputFieldsContainer input[type="text"]').length === 0) {
+        addInputField('', false);
+      }
+
+      // Render saved codes
+      el('savedLoader').style.display = 'inline-block';
+      await renderSavedCodes();
+    });
+  </script>
+</body>
+</html>
